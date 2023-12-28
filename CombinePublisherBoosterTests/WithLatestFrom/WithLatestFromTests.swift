@@ -159,4 +159,32 @@ class WithLatestFromTests: XCTestCase {
     XCTAssertEqual(2, capturedValues[2].1)
     XCTAssertEqual(3.3, capturedValues[2].2)
   }
+
+  func test_withLatestFrom_concurrentDemandAndCancel() {
+    // Arrange
+    let passthrough = PassthroughSubject<String, Never>()
+    let latestFrom = PassthroughSubject<Int, Never>()
+
+    let subject = passthrough.withLatestFrom(latestFrom)
+    let queue = DispatchQueue.global()
+    let group = DispatchGroup()
+
+    // Act
+    // Use a dispatch group to ensure we run through many iterations.
+    for _ in 0...50_000 {
+      group.enter()
+      queue.async {
+        // Create demand
+        let cancelable = subject.sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+        cancelable.cancel()
+        // Do _not_ store the cancelable as our storage set here is not threadsafe.
+        group.leave()
+      }
+    }
+
+    // Assert
+    group.wait()
+    // No need to explicitly assert anything, just validate that we haven't crashed from a bad
+    // memory access.
+  }
 }
