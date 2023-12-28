@@ -38,15 +38,18 @@ private struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: P
   let other: B
 
   func receive<S>(subscriber: S) where S : Subscriber, A.Failure == S.Failure, (A.Output, B.Output?) == S.Input {
-    WithLatestFromPublisherSubscription(subscriber: subscriber, publisher: publisher, other: other)
+    subscriber.receive(subscription: WithLatestFromPublisherSubscription(subscriber: subscriber,
+                                                                         publisher: publisher,
+                                                                         other: other))
   }
 }
 
 /// Private extension used to declare the subscription class.
 private extension WithLatestFromPublisher {
   /// Represents a subscription to the `WithLatestFromPublisher`
-  final class WithLatestFromPublisherSubscription<S: Subscriber>: Subscription where
-      A.Failure == B.Failure, A.Failure == S.Failure, S.Input == (A.Output, B.Output?) {
+  final class WithLatestFromPublisherSubscription<S: Subscriber>: Subscription where A.Failure == B.Failure,
+                                                                                     A.Failure == S.Failure,
+                                                                                     S.Input == (A.Output, B.Output?) {
     @discardableResult
     init(subscriber: S, publisher: A, other: B) {
       self.subscriber = subscriber
