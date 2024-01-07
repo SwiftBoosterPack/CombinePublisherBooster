@@ -20,9 +20,9 @@ public extension Publisher {
   }
 }
 
-/// Private implementation for creating `WithLatsetFrom` similar to [RxSwift](https://github.com/ReactiveX/RxSwift/blob/main/RxSwift/Observables/WithLatestFrom.swift)
-private struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: Publisher,
-                                                              A.Failure == B.Failure {
+/// Implementation for creating `WithLatsetFrom` similar to [RxSwift](https://github.com/ReactiveX/RxSwift/blob/main/RxSwift/Observables/WithLatestFrom.swift)
+struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: Publisher,
+                                                      A.Failure == B.Failure {
 
   init(_ publisher: A, _ other: B) {
     self.publisher = publisher
@@ -44,8 +44,8 @@ private struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: P
   }
 }
 
-/// Private extension used to declare the subscription class.
-private extension WithLatestFromPublisher {
+/// Extension used to declare the subscription class.
+extension WithLatestFromPublisher {
   /// Represents a subscription to the `WithLatestFromPublisher`
   final class WithLatestFromPublisherSubscription<S: Subscriber>: Subscription where A.Failure == B.Failure,
                                                                                      A.Failure == S.Failure,
@@ -75,7 +75,7 @@ private extension WithLatestFromPublisher {
       // We don't care what the particular demand is, we connect to the other publisher to
       // start capturing values.
       other.sink { _ in
-        /// We don't care about the `latestFrom` completing. We just want the values.
+        // We don't care about the `latestFrom` completing. We just want the values.
       } receiveValue: { [weak self] value in
         // If self no longer exists, don't do any work!
         guard let self else { return }
@@ -88,6 +88,8 @@ private extension WithLatestFromPublisher {
       publisher.sink { [weak self] completion in
         guard let self else { return }
         subscriber?.receive(completion: completion)
+        // The subscriber can be released now, as we don't expect future values anymore.
+        subscriber = nil
       } receiveValue: { [weak self] value in
         // If self no longer exists, don't do any work!
         guard let self else { return }

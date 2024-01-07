@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "combinetestingbooster",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftBoosterPack/CombineTestingBooster.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0aeed7d1a1c6059156d84f562718e0b4e687ffc3"
+      }
+    }
+  ],
+  "version" : 2
+}
