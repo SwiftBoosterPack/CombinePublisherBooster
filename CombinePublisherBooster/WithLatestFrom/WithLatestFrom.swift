@@ -20,7 +20,7 @@ public extension Publisher {
   }
 }
 
-/// Private implementation for creating `WithLatsetFrom` similar to [RxSwift](https://github.com/ReactiveX/RxSwift/blob/main/RxSwift/Observables/WithLatestFrom.swift)
+/// Implementation for creating `WithLatsetFrom` similar to [RxSwift](https://github.com/ReactiveX/RxSwift/blob/main/RxSwift/Observables/WithLatestFrom.swift)
 struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: Publisher,
                                                       A.Failure == B.Failure {
 
@@ -44,7 +44,7 @@ struct WithLatestFromPublisher<A, B>: Publisher where A: Publisher, B: Publisher
   }
 }
 
-/// Private extension used to declare the subscription class.
+/// Extension used to declare the subscription class.
 extension WithLatestFromPublisher {
   /// Represents a subscription to the `WithLatestFromPublisher`
   final class WithLatestFromPublisherSubscription<S: Subscriber>: Subscription where A.Failure == B.Failure,
