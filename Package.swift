@@ -13,6 +13,9 @@ let package = Package(
       targets: ["CombinePublisherBooster"]
     ),
   ],
+  dependencies: [
+    .package(url: "https://github.com/SwiftBoosterPack/CombineTestingBooster.git", branch: "main")
+  ],
   targets: [
     .target(
       name: "CombinePublisherBooster",
@@ -21,7 +24,10 @@ let package = Package(
     ),
     .testTarget(
       name: "CombinePublisherBoosterTests",
-      dependencies: ["CombinePublisherBooster"],
+      dependencies: [
+        "CombinePublisherBooster",
+        .product(name: "CombineTesting", package: "CombineTestingBooster")
+      ],
       path: "CombinePublisherBoosterTests"
     ),
   ]
